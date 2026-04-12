@@ -16,7 +16,6 @@
 #include <functional>
 #include <memory>
 #include <thread>
-
 #include "btcpp_ros2_interfaces/msg/node_status.hpp"
 
 #include "behaviortree_cpp/bt_factory.h"

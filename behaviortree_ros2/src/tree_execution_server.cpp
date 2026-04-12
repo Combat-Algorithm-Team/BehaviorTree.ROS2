@@ -26,9 +26,7 @@
 #include "behaviortree_ros2/bt_utils.hpp"
 
 #include "behaviortree_cpp/loggers/groot2_publisher.h"
-
 #include "btcpp_ros2_interfaces/srv/get_trees.hpp"
-
 namespace
 {
 static const auto kLogger = rclcpp::get_logger("bt_action_server");
