@@ -7,7 +7,7 @@ bt_server:
   }
   tick_frequency: {
     type: int,
-    default_value: 100,
+    default_value: 5,
     read_only: true,
     description: "Frequency in Hz to tick() the Behavior tree at",
     validation: {
