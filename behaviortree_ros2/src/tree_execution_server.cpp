@@ -103,7 +103,12 @@ TreeExecutionServer::TreeExecutionServer(const rclcpp::Node::SharedPtr& node)
 }
 
 TreeExecutionServer::~TreeExecutionServer()
-{}
+{
+  if(p_->action_thread.joinable())
+  {
+    p_->action_thread.join();
+  }
+}
 
 void TreeExecutionServer::executeRegistration()
 {
@@ -257,12 +262,31 @@ void TreeExecutionServer::execute(
       }
       loop_deadline += period;
     }
+
+    if(!rclcpp::ok())
+    {
+      p_->tree.haltTree();
+      action_result->node_status = ConvertNodeStatus(status);
+      if(auto msg = onTreeExecutionCompleted(status, true))
+      {
+        action_result->return_message = msg.value();
+      }
+      else
+      {
+        action_result->return_message = "ROS shutdown requested; halted Behavior Tree";
+      }
+      RCLCPP_WARN(kLogger, action_result->return_message.c_str());
+      return;
+    }
   }
   catch(const std::exception& ex)
   {
     action_result->return_message = std::string("Behavior Tree exception:") + ex.what();
     RCLCPP_ERROR(kLogger, action_result->return_message.c_str());
-    goal_handle->abort(action_result);
+    if(goal_handle->is_active())
+    {
+      goal_handle->abort(action_result);
+    }
     return;
   }
 
